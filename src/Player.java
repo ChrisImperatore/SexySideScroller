@@ -9,10 +9,10 @@ public class Player {
 // artist austin, peter
 
     private Image img;
-    int x, y, dx, dy, backgroundX, L_and_R_Counter, RedPlatform1X, RedPlatform2X, PlayerX, U_and_D_Counter, AmaterasuDragonCounter, rockX, ChidoriCounter, ResenganCounter,RunningCounter_R;
+    int x, y, dx, dy, backgroundX, L_and_R_Counter, RedPlatform1X, RedPlatform2X, PlayerX, U_and_D_Counter, AmaterasuDragonCounter, rockX, ChidoriCounter, ResenganCounter,RunningCounter_R, nRock1HitCounter;
     long time;
     private final int SPEED = 6, GRAV = 1;
-    boolean left, right, isJumping, isCrouching, release_R, release_L, isAttacking_AmaterasuDragon_R, isAttacking_Chidori_R, isFalling, isAttacking_arnResengan_R, isRunning, isRockdestroyed;
+    boolean left, right, isJumping, isCrouching, release_R, release_L, isAttacking_AmaterasuDragon_R, isAttacking_Chidori_R, isFalling, isAttacking_arnResengan_R, isRunning, isRock1destroyed;
     private int Xmin, Xmax, Ymin, Ymax;
     private Board b;
     // images for the right running action
@@ -155,6 +155,7 @@ public class Player {
         ChidoriCounter = 0;
         ResenganCounter = 0;
         RunningCounter_R = 0;
+        nRock1HitCounter = 0;
         left = false;
         right = false;
         isJumping = false;
@@ -166,7 +167,7 @@ public class Player {
         isAttacking_Chidori_R = false;
         isAttacking_arnResengan_R = false;
         isRunning = false;
-        isRockdestroyed = false;
+        isRock1destroyed = false;
 
         // images set to running right array
         arnWalking_R[0] = i1.getImage();
@@ -282,9 +283,6 @@ public class Player {
             y = 238;
             isFalling = true;
             isJumping = false;
-        }
-        if (isAtRock()) {
-            System.out.println("rock");
         }
 
     }
@@ -403,17 +401,22 @@ public class Player {
             isAttacking_AmaterasuDragon_R = true;
         } else if (code == KeyEvent.VK_K) {
             isAttacking_Chidori_R = true;
-            if(isAttackHittingRock() == true){
-                isRockdestroyed = true;
-                System.out.println("Rockdestroyed");
+            if(isAttackHittingRock() == true && ChidoriCounter == 18){
+                nRock1HitCounter++;
             }
         } else if (code == KeyEvent.VK_DOWN) {
             isCrouching = true;
         } else if (code == KeyEvent.VK_L) {
             isAttacking_arnResengan_R = true;
+             if(isAttackHittingRock() == true && ResenganCounter == 24){
+                nRock1HitCounter++;
+            }
         }
         else if (code == KeyEvent.VK_CONTROL){
             isRunning = true;
+        }
+        if(nRock1HitCounter == 4){
+            isRock1destroyed = true;
         }
     }
     // check what key is released
@@ -483,6 +486,12 @@ public class Player {
         int nFrontOfAttack;
         if(isAttacking_Chidori_R == true){
             nFrontOfAttack = PlayerX + 20;
+            if(nFrontOfAttack > (rockX - 70) && nFrontOfAttack < (rockX + 42)){
+                return true;
+            }
+        }
+         if(isAttacking_arnResengan_R == true){
+            nFrontOfAttack = PlayerX + 30;
             if(nFrontOfAttack > (rockX - 70) && nFrontOfAttack < (rockX + 42)){
                 return true;
             }
